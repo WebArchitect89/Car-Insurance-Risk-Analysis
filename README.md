@@ -1,9 +1,166 @@
-# Car-Insurance-Analysis
-A a comprehensive SQL analytics framework using a complete UK car insurance dataset (1,200+ customers, 1,500+ policies, 1,000+ claims)
+![DATABRICKS](https://img.shields.io/badge/Databricks-FF3621?style=for-the-badge&logo=Databricks&logoColor=white)
+![Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
+![MICROSOFT AZURE](https://img.shields.io/badge/microsoft%20azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white)
+	
 
-Customer segmentation by demographics, policy and vehicle details and claims information. 
 
-## SEGMENTATION
+## Overview
+
+What if you could predict which insurance customers are 3x more likely to file a claim before they even do?
+
+UK insurers lose millions annually due to:
+
+* Inaccurate risk pricing based on incomplete data analysis
+* Reactive claim management instead of predictive insights
+* Fragmented customer data across multiple systems
+* Manual reporting processes that delay critical decisions
+
+ SOLUTION:
+
+I developed a comprehensive SQL analytics framework using a complete UK car insurance, randomly generated, dataset (1,200+ customers, 1,500+ policies, 1,000+ claims):
+
+* Advanced SQL queries for customer segmentation & risk profiling
+* Claims pattern analysis identifying high-risk indicators
+* Automated reporting dashboards for real-time insights
+* Predicting Claim Likelihood by Segment Based on Historical Data
+
+This project demonstrates ability to:
+* Reduce claim costs through better risk assessment
+* Improve customer retention via targeted pricing strategies
+* Accelerate decision-making with automated SQL reporting
+* Transform raw data into actionable business intelligence
+
+
+## Table of Contents
+
+- <a href="#background-information"
+  id="toc-background-information">Ask</a>
+  - <a href="#business-task" id="toc-business-task">Business Task</a>
+- <a href="#prepare" id="toc-data-preparation">Prepare</a>
+- <a href="#process" id="toc-data-exploration">Process</a>
+- <a href="#analyze" id="toc-data-visualization">Analyze</a>
+- <a href="#share" id="toc-recommendations">Share</a>
+- <a href="#act" id="toc-recommendations">Act</a>
+
+
+## Business Task
+
+Analyze customer behavior, policy performance, and claims patterns within the UK car insurance market to identify high-risk customers, optimize pricing strategies, and reduce overall claim costs through data-driven insights.
+
+
+## Prepare
+
+Dataset overview:
+
+Randomly generated data using Juilius AI
+
+- customers.csv - 1200 rows, 11 columns
+
+  - Primary Key: customer_id
+
+  - Contains: Customer demographics, contact info, driving history
+
+- policies.csv - 1500 rows, 12 columns
+
+  - Primary Key: policy_id
+
+  - Foreign Key: customer_id (references customers.csv)
+
+  - Contains: Policy details, vehicle info, coverage, premiums
+
+- claims.csv - 1000 rows, 11 columns
+
+  - Primary Key: claim_id
+
+  - Foreign Key: policy_id (references policies.csv)
+
+  - Foreign Key: customer_id (references customers.csv) 
+
+  - Contains: Claim details, incident info, settlements
+
+
+Relationships:
+
+- One customer can have multiple policies (1:N)
+
+- One policy can have multiple claims (1:N)
+
+- Customers -> Policies -> Claims (hierarchical relationship)
+
+## Process
+
+- Removed any blanks.
+- Removed duplicates.
+- Ensured the data is in the right format.
+
+
+## Analyze
+
+#### SEGMENTATION
+
+Premiums and number of policies by age group.
+
+```
+SELECT 
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END AS age_group,
+    
+    SUM(p.annual_premium) AS total_premiums,
+    ROUND(AVG(p.annual_premium),2) AS avg_premium_per_policy,
+    COUNT(DISTINCT p.policy_id) AS num_policies,
+    COUNT(DISTINCT c.customer_id) AS num_customers
+    
+FROM customers c
+JOIN policies p ON c.customer_id = p.customer_id
+GROUP BY 
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END
+ORDER BY age_group;
+```
+<img width="1700" height="775" alt="Premiums and number of policies by age group " src="https://github.com/user-attachments/assets/90c676ad-380d-49b8-a9a8-204b71c372e4" />
+
+
+Total customers and the total broke by age group.
+
+```
+
+SELECT 
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END AS age_group,
+    COUNT(DISTINCT c.customer_id) AS num_customers
+FROM customers c
+GROUP BY 
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END
+ORDER BY age_group;
+
+```
+
+<img width="1703" height="431" alt="Total customers and the total broke by age group" src="https://github.com/user-attachments/assets/002317a1-f532-4197-9853-c9e1356522ad" />
+
+
+
+
+
+Segmenting the customers by demographics policy and vehicle details as well as claims details.
+Also I have taken into account the average credit score and average years licensed. 
+
 ```
 SELECT 
     -- Demographics
@@ -40,7 +197,8 @@ LEFT JOIN (
 GROUP BY age_group, c.gender, c.marital_status, c.occupation, p.coverage_type, p.vehicle_make
 ORDER BY age_group, c.gender, p.coverage_type, p.vehicle_make;
 ```
-Highest and Lowest Claim Segment Code
+Total Claims Amount By Age Group.
+Calculating what is the amount claimed by the age group, that information would be useful to inform the pricing strategy.
 ```
 SELECT 
     -- Demographics
@@ -64,16 +222,33 @@ JOIN claims cl
 GROUP BY age_group, c.gender, c.marital_status, c.occupation
 ORDER BY total_claims_amount DESC;
 ```
-Total Claims Amount By Age Group
 
 <img width="2748" height="1184" alt="Total Claims Amount By Age Group" src="https://github.com/user-attachments/assets/5bcc4bf5-7d01-4a2c-a678-fced6ce3554c" />
 
 
 
 
-## PROFITABILITY
+#### PROFITABILITY
+Overall Profitability
 
-Profitability-Based Customer Profiles Code
+```
+SELECT
+    SUM(p.annual_premium) AS total_premiums,
+    SUM(COALESCE(cl.claim_amount,0)) AS total_claims,
+    (SUM(p.annual_premium) - SUM(COALESCE(cl.claim_amount,0))) AS profit,
+    ROUND(SUM(COALESCE(cl.claim_amount,0)) * 1.0 / NULLIF(SUM(p.annual_premium),0), 2) AS loss_ratio
+FROM policies p
+LEFT JOIN claims cl ON p.policy_id = cl.policy_id
+LEFT JOIN customers c ON p.customer_id = c.customer_id;
+
+```
+
+<img width="1693" height="818" alt="Overall Profitability" src="https://github.com/user-attachments/assets/59c329b6-2821-4726-bdd1-76c10da7871b" />
+
+
+
+
+Profitability-Based Customer Profiles
 
 
 ```
@@ -127,8 +302,6 @@ LEFT JOIN (
 GROUP BY age_group, c.gender, c.marital_status, c.occupation, p.coverage_type, p.vehicle_make, cl.claim_status
 ORDER BY profit DESC;
 ```
-
-Profitability-Based Customer Profiles Visuals
 
 Profit by age group
 
@@ -193,7 +366,7 @@ Average Claims by Age and Occupation Visuals
 
 ## Segment Risk Profiling 
 
-Segment Risk Profiling Code
+Segment Risk Profiling 
 
 ```
 SELECT 
@@ -252,5 +425,11 @@ Segment Risk Profiling Visuals
 
 <img width="1903" height="717" alt="Segment Risk Profiling " src="https://github.com/user-attachments/assets/5ccd7a08-923f-4943-adbc-b66eea01e35f" />
 
+
+
+Claim Likelihood by Segment Based on Historical Data
+
+
+![326F5BED-58FE-47F5-AA60-7229B5A76C69](https://github.com/user-attachments/assets/883d71f1-da6f-4b32-985a-6924daa342b0)
 
 
