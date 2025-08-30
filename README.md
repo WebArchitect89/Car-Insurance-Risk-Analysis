@@ -191,23 +191,23 @@ The query pulls the following info:
 Breaks down the customers by segments such us:
 
 
--Demographics
- -Age group
- -Gender
- -Marital status
- -Occupation
+- Demographics
+ - Age group
+ - Gender
+ - Marital status
+ - Occupation
 
--Policy and vehicle details such as:
- -Coverage 
- -Vehicle make
+- Policy and vehicle details such as:
+ - Coverage 
+ - Vehicle make
 
 Aggregates by segments such as 
 
--Number of customers
--Average credit score 
--Average licensed years
--Average credit score
--Average premiums
+- Number of customers
+- Average credit score 
+- Average licensed years
+- Average credit score
+- Average premiums
 
 I also enriched that with the information from the claims data set.
 This allows us to create the following:
@@ -259,7 +259,7 @@ Average Claims per Customer by Age and Occupation
 
 #### PROFITABILITY
 Overall Profitability
-
+Looking at the overall profitability of the data it looks that the data set is highly unprofitable.
 ```
 SELECT
     SUM(p.annual_premium) AS total_premiums,
