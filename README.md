@@ -397,7 +397,7 @@ Average Claims by Age and Occupation Visuals
 
 <img width="2748" height="1184" alt="Average Claims per Customer by Age and Occupation" src="https://github.com/user-attachments/assets/8257bb1b-ee8c-4e5a-aabd-de4fa0a1430c" />
 
-## Segment Risk Profiling 
+## Segment Risk Profiling and prediction of the likelihood of a claim based on previous behaviour.
 
 Segment Risk Profiling 
 
