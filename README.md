@@ -344,7 +344,8 @@ Profit by Age and Marital Status
 
 Profit by Gender
 
-<img width="2748" height="704" alt="Profit by Gender" src="https://github.com/user-attachments/assets/d65b667a-a525-47ca-90c9-471a08148f35" />
+<img width="1366" height="704" alt="Profit by Gender" src="https://github.com/user-attachments/assets/63f28227-53a0-410b-8668-8d73321f4a1f" />
+
 
 Profit by occupation
 
@@ -460,6 +461,40 @@ Segment Risk Profiling Visuals
 
 
 Claim Likelihood by Segment Based on Historical Data
+
+```
+SELECT 
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END AS age_group,
+    c.gender,
+    c.marital_status,
+    p.coverage_type,
+    p.vehicle_make,
+    
+    COUNT(DISTINCT c.customer_id) AS total_customers,
+    COUNT(DISTINCT CASE WHEN cl.claim_id IS NOT NULL THEN c.customer_id END) AS customers_with_claims,
+    
+    -- Historical claim likelihood (empirical probability)
+    ROUND(
+        COUNT(DISTINCT CASE WHEN cl.claim_id IS NOT NULL THEN c.customer_id END) 
+        * 1.0 / NULLIF(COUNT(DISTINCT c.customer_id), 0), 
+        2
+    ) AS claim_likelihood,
+    
+    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount
+
+FROM customers c
+JOIN policies p ON c.customer_id = p.customer_id
+LEFT JOIN claims cl ON c.customer_id = cl.customer_id 
+
+GROUP BY age_group, c.gender, c.marital_status, p.coverage_type, p.vehicle_make
+ORDER BY claim_likelihood DESC;
+
+```
 
 
 ![326F5BED-58FE-47F5-AA60-7229B5A76C69](https://github.com/user-attachments/assets/883d71f1-da6f-4b32-985a-6924daa342b0)
