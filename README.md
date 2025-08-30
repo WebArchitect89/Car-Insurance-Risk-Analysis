@@ -508,3 +508,5 @@ ORDER BY claim_likelihood DESC;
 
 ## Act
 
+Implement segment-specific pricing strategies, develop targeted risk mitigation programmes for high-risk segments, and establish continuous monitoring systems to maintain predictive accuracy.
+
