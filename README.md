@@ -279,6 +279,9 @@ LEFT JOIN customers c ON p.customer_id = c.customer_id;
 
 Profitability-Based Customer Profiles
 
+Analysing further profiles ranked by profitability (e.g., average premium – claims paid), so we can determine which segments are most valuable and focus on unprofitable segments to eradicate loss of revenue.
+The analysis assumes that if the claim status is closed then the settlement amount will be taken into consideration otherwise the claim amount will be used.
+
 
 ```
 SELECT 
