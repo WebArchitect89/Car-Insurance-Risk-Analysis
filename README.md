@@ -501,5 +501,10 @@ ORDER BY claim_likelihood DESC;
 
 
 ## Share
+
+- <a href="https://gamma.app/docs/Advanced-SQL-Analytics-for-UK-Insurance-Predictive-Risk-Profiling-jgn40euxsn2z4os" id="toc-data-preparation">Presentation</a>
+
+
+
 ## Act
 
