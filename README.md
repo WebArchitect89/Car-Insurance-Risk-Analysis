@@ -96,7 +96,6 @@ Relationships:
 
 ## Analyze
 
-#### SEGMENTATION
 
 Premiums and number of policies by age group.
 
@@ -154,12 +153,66 @@ ORDER BY age_group;
 
 <img width="1703" height="431" alt="Total customers and the total broke by age group" src="https://github.com/user-attachments/assets/002317a1-f532-4197-9853-c9e1356522ad" />
 
+#### CLAIMS AND PROFIT SEGMENTATION ANALYSIS
+
+Total Claims Amount By Age Group.
+Calculating what is the amount claimed by the age group, that information would be useful to inform the pricing strategy.
+```
+SELECT 
+    -- Demographics
+    CASE 
+        WHEN c.age < 25 THEN 'Under 25'
+        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
+        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
+        ELSE '60+'
+    END AS age_group,
+    c.gender,
+    c.marital_status,
+    c.occupation,
+    
+    -- Claims
+    COUNT(cl.claim_id) AS claim_count,
+    ROUND(SUM(cl.claim_amount), 2) AS total_claims_amount,
+    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount   
+FROM customers c
+JOIN claims cl 
+    ON c.customer_id = cl.customer_id  
+GROUP BY age_group, c.gender, c.marital_status, c.occupation
+ORDER BY total_claims_amount DESC;
+```
+
+<img width="2748" height="1184" alt="Total Claims Amount By Age Group" src="https://github.com/user-attachments/assets/5bcc4bf5-7d01-4a2c-a678-fced6ce3554c" />
+
+This code segments the customers by demographics policy and vehicle details as well as claims details.
+Also I have taken into account the average credit score and average years licensed.  
+The query pulls the following info:
 
 
+Breaks down the customers by segments such us:
 
 
-Segmenting the customers by demographics policy and vehicle details as well as claims details.
-Also I have taken into account the average credit score and average years licensed. 
+-Demographics
+ -Age group
+ -Gender
+ -Marital status
+ -Occupation
+
+-Policy and vehicle details such as:
+ -Coverage 
+ -Vehicle make
+
+Aggregates by segments such as 
+
+-Number of customers
+-Average credit score 
+-Average licensed years
+-Average credit score
+-Average premiums
+
+I also enriched that with the information from the claims data set.
+This allows us to create the following:
+
+Average Claims per Customer by Age and Occupation
 
 ```
 SELECT 
@@ -197,34 +250,10 @@ LEFT JOIN (
 GROUP BY age_group, c.gender, c.marital_status, c.occupation, p.coverage_type, p.vehicle_make
 ORDER BY age_group, c.gender, p.coverage_type, p.vehicle_make;
 ```
-Total Claims Amount By Age Group.
-Calculating what is the amount claimed by the age group, that information would be useful to inform the pricing strategy.
-```
-SELECT 
-    -- Demographics
-    CASE 
-        WHEN c.age < 25 THEN 'Under 25'
-        WHEN c.age BETWEEN 25 AND 39 THEN '25-39'
-        WHEN c.age BETWEEN 40 AND 59 THEN '40-59'
-        ELSE '60+'
-    END AS age_group,
-    c.gender,
-    c.marital_status,
-    c.occupation,
-    
-    -- Claims
-    COUNT(cl.claim_id) AS claim_count,
-    ROUND(SUM(cl.claim_amount), 2) AS total_claims_amount,
-    ROUND(AVG(cl.claim_amount), 2) AS avg_claim_amount   
-FROM customers c
-JOIN claims cl 
-    ON c.customer_id = cl.customer_id  
-GROUP BY age_group, c.gender, c.marital_status, c.occupation
-ORDER BY total_claims_amount DESC;
-```
 
-<img width="2748" height="1184" alt="Total Claims Amount By Age Group" src="https://github.com/user-attachments/assets/5bcc4bf5-7d01-4a2c-a678-fced6ce3554c" />
+Average Claims per Customer by Age and Occupation
 
+<img width="2748" height="1184" alt="Average Claims per Customer by Age and Occupation" src="https://github.com/user-attachments/assets/040a721d-e3e7-402c-bac1-c28a90220d33" />
 
 
 
